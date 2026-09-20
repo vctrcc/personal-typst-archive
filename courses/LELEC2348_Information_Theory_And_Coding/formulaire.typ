@@ -3,7 +3,7 @@
 #import "@preview/cetz:0.5.2"
 #import "@preview/simple-plot:0.8.0"
 
-#let edge-text = [Formulaire made by Victor Carballes the #datetime.today().display("[year]-[month]-[day]") for the course LINGI2348 Information Theory & Coding at UCLouvain.]
+#let edge-text = [Formulaire made by Victor Carballes the #datetime.today().display("[year]-[month]-[day]") for the course LELEC2348 Information Theory & Coding at UCLouvain.]
 
 #let edge-header-footer = [
   #set text(size: 7pt, fill: rgb("#9e9e9e"))
