@@ -1,4 +1,4 @@
-#import "../syth_template.typ": conf, note_block, block_colors, todo_block, def_block
+#import "../../templates/template_syth_gen1.typ": conf, note_block, block_colors, todo_block, def_block
 #show: conf.with(
   title: [
     Part 2 - Physics of semiconductor devices and components

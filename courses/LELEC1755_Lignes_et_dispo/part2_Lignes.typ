@@ -1,4 +1,4 @@
-#import "../syth_template.typ": conf, note_block, block_colors, todo_block
+#import "../../templates/template_syth_gen1.typ": conf, note_block, block_colors, todo_block
 #show: conf.with(
   title: [
     Part 1.2 - Transmission Lines

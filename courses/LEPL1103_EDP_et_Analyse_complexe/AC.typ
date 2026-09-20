@@ -1,4 +1,4 @@
-#import "../syth_template.typ": conf, block_colors, note_block, todo_block, def_block
+#import "../../templates/template_syth_gen1.typ": conf, block_colors, note_block, todo_block, def_block
 #show: conf.with(
   title: [
     EDP - Complex Analysis

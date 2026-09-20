@@ -1,4 +1,4 @@
-#import "../syth_template.typ": conf, block_colors, note_block
+#import "../../templates/template_syth_gen1.typ": conf, block_colors, note_block
 
 // Material added from the official syllabus is intentionally shown in dark purple.
 #let added_purple = rgb("#5B2C83")

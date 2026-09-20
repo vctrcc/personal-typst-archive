@@ -1,4 +1,4 @@
-#import "../syth_template.typ": conf, note_block, block_colors
+#import "../../templates/template_syth_gen1.typ": conf, note_block, block_colors
 #show: conf.with(
   title: [
     Part 1.1 - Dielectric, Magnetic and Conductive Materials
@@ -722,7 +722,7 @@ Here, the trick is differenciating the 4 zones of the cable. When using Ampere's
 ))
 
 #align(center, figure(
-  image("part1_diagrams/Sadiku matthew electronics/Sadiku Matthew Elements of Electromagnetics 2014_analogy between electric and magnetic.png", width: 50%),
+  image("part1_diagrams/Sadiku matthew electronics/Sadiku Matthew Elements of ...analogy between electric and magnetic.png", width: 50%),
   caption: [Links between electric and magnetic formulas @sadiku2014elements]
 ))
 

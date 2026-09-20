@@ -1,4 +1,4 @@
-#import "../templates/template_syth_gen2.typ": *
+#import "../../templates/template_syth_gen2.typ": *
 #show: conf.with(
   course: "LELEC2900: Signal Processing",
   authors: (
