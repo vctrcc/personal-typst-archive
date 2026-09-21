@@ -172,12 +172,26 @@
 // when migrating old documents. Keep new formularies on the API above.
 // ============================================================================
 
+/// Identifies the public formulaire API generation shown in page furniture.
+/// Use this value when an assist file needs to display or check the template generation.
+/// ```typst
+/// Formulaire generation: #FORMULAIRE_GEN
+/// ```
 #let FORMULAIRE_GEN = "Gen 2"
 
 // ============================================================================
 // THEME
 // ============================================================================
 
+/// Provides the complete color theme used by the template.
+/// Base fields include `ink`, `muted`, `line`, and the named accent colors. Card fields
+/// follow `<kind>_title`, `<kind>_tint`, and `<kind>_border`; the remaining fields style
+/// equations, diagrams, nested cards, and punch-preview marks.
+/// Read fields directly when building course-specific components; prefer semantic helpers
+/// when the color represents meaning rather than decoration.
+/// ```typst
+/// #text(fill: colors.blue)[A themed course note]
+/// ```
 #let colors = (
   ink: rgb("#1f2937"),
   muted: rgb("#6b7280"),
@@ -233,6 +247,13 @@
   punch_stroke: rgb("#b91c1c"),
 )
 
+/// Maps stable semantic tone names to theme colors.
+/// Fields are `definition`, `important`, `indicator`, `category`, `danger`, `success`,
+/// `info`, `warning`, and `context`. These keys are accepted by `semantic` and other
+/// APIs with a `tone` parameter.
+/// ```typst
+/// #text(fill: semantic_colors.important)[Key result]
+/// ```
 #let semantic_colors = (
   definition: colors.red,
   important: colors.blue,
@@ -245,6 +266,14 @@
   "context": colors.purple,
 )
 
+/// Defines the palettes for top-level card kinds.
+/// Each kind has `title`, `tint`, `border`, and `accent` paints. An optional `body` paint
+/// overrides the usual white non-breakable or tinted breakable body; the `todo` palette
+/// uses this override. Built-in fields are `result`, `theory`, `exercise`, `example`,
+/// `proof`, `exam`, `warning`, and `todo`.
+/// ```typst
+/// #rect(fill: box_palettes.result.tint, stroke: box_palettes.result.border)[Result]
+/// ```
 #let box_palettes = (
   result: (
     title: colors.result_title,
@@ -297,6 +326,13 @@
   ),
 )
 
+/// Defines the palettes available to nested `sub_box` cards.
+/// Every palette contains `title`, `tint`, `border`, and `accent` paints. Fields are
+/// `definition`, `reminder`, `theorem`, `example`, `warning`, and `extra`; custom nested
+/// components can reuse any field as a complete palette.
+/// ```typst
+/// #sub_box("Aside", palette: sub_box_palettes.extra)[Optional detail]
+/// ```
 #let sub_box_palettes = (
   definition: (
     title: colors.sub_title,
@@ -336,6 +372,14 @@
   ),
 )
 
+/// Maps built-in pill names to their visual styles.
+/// Each field contains a displayed `label`, background `fill`, and text `ink`. Unknown
+/// pill names do not use this map and instead derive a style from the caller's fallback
+/// accent. Built-ins include `exam`, `warn`, `important`, `extra`, `definition`, `proof`,
+/// and `optional`.
+/// ```typst
+/// #text(fill: tag_styles.exam.ink)[#tag_styles.exam.label]
+/// ```
 #let tag_styles = (
   exam: (label: "EXAM", fill: colors.exam_title, ink: colors.red),
   warn: (label: "WARN", fill: colors.warning_title, ink: colors.orange),
@@ -346,6 +390,13 @@
   optional: (label: "OPTIONAL", fill: colors.diagram_title, ink: colors.muted),
 )
 
+/// Stores the supported page-layout presets used by `formulaire`.
+/// The `vertical` and `horizontal` fields each define `flipped`, `columns`, `margin`,
+/// `gutter`, `text_size`, and `header_size`. `formulaire` validates the selected layout
+/// and applies the corresponding record to A4 pages, columns, and edge text.
+/// ```typst
+/// The horizontal preset uses #layout_configs.horizontal.columns columns.
+/// ```
 #let layout_configs = (
   vertical: (
     flipped: false,
@@ -635,20 +686,73 @@
 // PUBLIC INLINE SEMANTICS
 // ============================================================================
 
+/// Styles inline content with a stable semantic meaning.
+/// - `body`: Content to style.
+/// - `tone`: Key from `semantic_colors`; defaults to `"info"`.
+/// - `weight`: Typst text weight; defaults to `"bold"`.
+/// - `fill`: Explicit paint override; `none` resolves the selected tone.
+/// ```typst
+/// #semantic(tone: "important")[Remember this identity.]
+/// ```
 #let semantic(body, tone: "info", weight: "bold", fill: none) = text(
   fill: if fill == none { _semantic_color(tone) } else { fill },
   weight: weight,
   body,
 )
 
+/// Highlights content with the definition semantic tone.
+/// - `body`: Inline content to emphasize as a definition.
+/// ```typst
+/// #definition[Channel capacity] is the maximum mutual information.
+/// ```
 #let definition(body) = semantic(body, tone: "definition")
+/// Highlights content with the important semantic tone.
+/// - `body`: Inline content that deserves primary emphasis.
+/// ```typst
+/// #important[Normalize before comparing the spectra.]
+/// ```
 #let important(body) = semantic(body, tone: "important")
+/// Highlights content with the indicator semantic tone.
+/// - `body`: Inline content that signals a condition or marker.
+/// ```typst
+/// #indicator[Memoryless channel]
+/// ```
 #let indicator(body) = semantic(body, tone: "indicator")
+/// Marks content as a category using semibold semantic styling.
+/// - `body`: Inline category name or classification.
+/// ```typst
+/// #category[Continuous-time model]
+/// ```
 #let category(body) = semantic(body, tone: "category", weight: "semibold")
+/// Emphasizes dangerous, invalid, or critical content.
+/// - `body`: Inline warning content.
+/// ```typst
+/// #danger[Do not divide by a zero probability.]
+/// ```
 #let danger(body) = semantic(body, tone: "danger")
+/// Emphasizes a successful check or valid outcome.
+/// - `body`: Inline success content.
+/// ```typst
+/// #success[The units are consistent.]
+/// ```
 #let success(body) = semantic(body, tone: "success")
+/// Highlights informational content with the info tone.
+/// - `body`: Inline explanatory content.
+/// ```typst
+/// #information[Assume base-2 logarithms.]
+/// ```
 #let information(body) = semantic(body, tone: "info")
+/// Highlights cautionary content with the warning tone.
+/// - `body`: Inline content requiring attention.
+/// ```typst
+/// #warning[Check the sign convention.]
+/// ```
 #let warning(body) = semantic(body, tone: "warning")
+/// Styles supporting context with the contextual semantic tone.
+/// - `body`: Inline contextual or interpretive content.
+/// ```typst
+/// #contextual[For a stationary source only.]
+/// ```
 #let contextual(body) = semantic(body, tone: "context")
 
 #let def = definition
@@ -657,8 +761,23 @@
 #let cat = category
 #let info = information
 #let warn = warning
+/// Applies neutral bold emphasis without a semantic color.
+/// - `body`: Inline content to embolden.
+/// ```typst
+/// #strong[Final answer]
+/// ```
 #let strong(body) = text(weight: "bold", body)
+/// Renders secondary content at `0.82em` in the muted theme color.
+/// - `body`: Inline supporting content.
+/// ```typst
+/// #small[Valid for the linear regime.]
+/// ```
 #let small(body) = text(size: 0.82em, fill: colors.muted, body)
+/// Renders a compact green note suited to nearby mathematical content.
+/// - `body`: Note content; it is styled at `0.82em`.
+/// ```typst
+/// $ C = B log(1 + "SNR") $ #math_note[bits per second]
+/// ```
 #let math_note(body) = text(size: 0.82em, fill: colors.green, body)
 
 // ============================================================================
@@ -674,19 +793,89 @@
   [#prefix #body]
 }
 
+/// Prefixes a statement with a green “Hypothesis” label.
+/// - `body`: Hypothesis content placed after the label.
+/// ```typst
+/// #label_hypothesis[The source is stationary.]
+/// ```
 #let label_hypothesis(body) = _statement_label("Hypothesis", body, tone: "indicator")
+/// Prefixes a statement with a green “Assumption” label.
+/// - `body`: Assumption content placed after the label.
+/// ```typst
+/// #label_assumption[The channel is memoryless.]
+/// ```
 #let label_assumption(body) = _statement_label("Assumption", body, tone: "indicator")
+/// Prefixes a statement with a green “Condition” label.
+/// - `body`: Condition content placed after the label.
+/// ```typst
+/// #label_condition[$p > 0$ is required.]
+/// ```
 #let label_condition(body) = _statement_label("Condition", body, tone: "indicator")
+/// Prefixes known data with a blue “Given” label.
+/// - `body`: Given information placed after the label.
+/// ```typst
+/// #label_given[$f_s = 8 " kHz"$.]
+/// ```
 #let label_given(body) = _statement_label("Given", body, tone: "info")
+/// Prefixes an approach with a blue “Method” label.
+/// - `body`: Method description placed after the label.
+/// ```typst
+/// #label_method[Apply Parseval's identity.]
+/// ```
 #let label_method(body) = _statement_label("Method", body, tone: "info")
+/// Prefixes procedural content with a neutral “Step” label.
+/// - `body`: Step content placed after the label.
+/// ```typst
+/// #label_step[Normalize the probability mass function.]
+/// ```
 #let label_step(body) = _statement_label("Step", body)
+/// Prefixes verification content with a green “Check” label.
+/// - `body`: Check or validation placed after the label.
+/// ```typst
+/// #label_check[The probabilities sum to one.]
+/// ```
 #let label_check(body) = _statement_label("Check", body, tone: "success")
+/// Prefixes supporting information with a contextual “Detail” label.
+/// - `body`: Detail content placed after the label.
+/// ```typst
+/// #label_detail[The logarithm uses base 2.]
+/// ```
 #let label_detail(body) = _statement_label("Detail", body, tone: "context")
+/// Prefixes optional supplementary content with an orange “Extra” label.
+/// - `body`: Extra content placed after the label.
+/// ```typst
+/// #label_extra[Derive the continuous-limit form.]
+/// ```
 #let label_extra(body) = _statement_label("Extra", body, tone: "warning")
+/// Prefixes a restricted result with a contextual “Special case” label.
+/// - `body`: Special-case content placed after the label.
+/// ```typst
+/// #label_special_case[For equiprobable symbols, $H(X) = log M$.]
+/// ```
 #let label_special_case(body) = _statement_label("Special case", body, tone: "context")
+/// Prefixes a result with a blue “Conclusion” label.
+/// - `body`: Concluding content placed after the label.
+/// ```typst
+/// #label_conclusion[The estimator is unbiased.]
+/// ```
 #let label_conclusion(body) = _statement_label("Conclusion", body, tone: "important")
+/// Prefixes explanatory meaning with a contextual “Interpretation” label.
+/// - `body`: Interpretation placed after the label.
+/// ```typst
+/// #label_interpretation[Entropy measures average uncertainty.]
+/// ```
 #let label_interpretation(body) = _statement_label("Interpretation", body, tone: "context")
+/// Prefixes cautionary content with an orange “Warning” label.
+/// - `body`: Warning content placed after the label.
+/// ```typst
+/// #label_warning[This approximation fails near cutoff.]
+/// ```
 #let label_warning(body) = _statement_label("Warning", body, tone: "warning")
+/// Prefixes a final response with a blue “Answer” label.
+/// - `body`: Answer content placed after the label.
+/// ```typst
+/// #label_answer[$C = 1 " bit/use"$.]
+/// ```
 #let label_answer(body) = _statement_label("Answer", body, tone: "important")
 
 #let lahyp = label_hypothesis
@@ -704,6 +893,15 @@
 #let lawarn = label_warning
 #let laans = label_answer
 
+/// Renders a compact uppercase metadata pill.
+/// - `label`: Pill name; built-in names use `tag_styles`.
+/// - `fill`: Custom background paint. With `none`, the built-in or fallback style is used.
+/// - `ink`: Optional text paint override; custom fills default to white text.
+/// - `searchable`: Emits searchable pill metadata when `true` (the default).
+/// Unknown names derive a purple fallback style unless `fill` is supplied.
+/// ```typst
+/// #pill("critical", fill: red, searchable: true)
+/// ```
 #let pill(label, fill: none, ink: none, searchable: true) = {
   let fallback = if fill == none { colors.purple } else { fill }
   if searchable { [#metadata((type: "pill", tag: lower(label))) <formulaire-pill>] }
@@ -722,14 +920,39 @@
   }
 }
 
+/// Attaches searchable metadata and optionally displays a matching pill.
+/// - `name`: Case-insensitive tag stored in lowercase.
+/// - `visible`: Shows the pill when `true`; hidden tags remain searchable.
+/// - `fill`: Optional custom pill background.
+/// ```typst
+/// #tag("definition", visible: false)
+/// ```
 #let tag(name, visible: true, fill: none) = {
   [#metadata((type: "tag", tag: lower(name))) <formulaire-pill>]
   if visible { pill(name, fill: fill, searchable: false) }
 }
 
+/// Displays a compact muted duration estimate in minutes.
+/// - `minutes`: Number or content shown before `min`.
+/// - `label`: Prefix text; defaults to `"est."`.
+/// ```typst
+/// #estimate(15)
+/// ```
 #let estimate(minutes, label: "est.") = text(size: 0.78em, fill: colors.muted)[#label #minutes min]
+/// Draws a thin full-width neutral separator line.
+/// It takes no parameters and follows the compact formulaire visual style.
+/// ```typst
+/// #hline()
+/// ```
 #let hline() = line(length: 100%, stroke: 0.2pt + luma(150))
 
+/// Creates an underlined subsection heading inside a card.
+/// - `title`: Heading content.
+/// - `separator`: Draws a horizontal rule above the heading; defaults to `true`.
+/// - `tone`: Optional semantic color name; `none` uses the standard ink color.
+/// ```typst
+/// #box_section("Boundary cases", separator: false, tone: "important")
+/// ```
 #let box_section(title, separator: true, tone: none) = {
   let fill = if tone == none { colors.ink } else { _semantic_color(tone) }
   block(width: 100%)[
@@ -739,6 +962,12 @@
 }
 #let bsec = box_section
 
+/// Produces dotted writing lines for handwritten additions.
+/// - `count`: Number of lines; defaults to `3` and must be suitable for `range`.
+/// Each line spans the available width and includes compact vertical spacing.
+/// ```typst
+/// #note_lines(count: 4)
+/// ```
 #let note_lines(count: 3) = [
   #for _ in range(count) [
     #line(length: 100%, stroke: (paint: colors.line, thickness: 0.25pt, dash: "dotted"))
@@ -750,6 +979,19 @@
 // PUBLIC MAIN CARD SYSTEM
 // ============================================================================
 
+/// Builds a top-level card from a built-in kind or custom palette.
+/// - `title`, `body`: Card heading and body content.
+/// - `kind`: Palette key in `box_palettes`; defaults to `"theory"`.
+/// - `breakable`: Allows page/column breaks and uses the tinted body when `true`.
+/// - `tag`: Optional single visible pill; `tags` supplies additional visible pills.
+/// - `metadata_tags`: Searchable tags that do not render as pills.
+/// - `palette`: Optional record with `title`, `tint`, `border`, `accent`, and optional
+///   `body`; when set, it overrides the palette selected by `kind`.
+/// - `collect`: Emits collection metadata by default. `collection_summary` can replace
+///   the body when a matching `collect_cards` call uses `compact: true`.
+/// ```typst
+/// #smartbox("Key idea", kind: "proof", tags: ("important",))[Justify the bound.]
+/// ```
 #let smartbox(
   title,
   body,
@@ -774,46 +1016,138 @@
   collection_summary: collection_summary,
 )
 
+/// Creates a green result card with a white, non-breakable body by default.
+/// - `title`, `body`: Result heading and content.
+/// - `breakable`: Enables splitting and switches to the tinted body when `true`.
+/// - `tag` / `tags`: One or several visible searchable pills.
+/// - `metadata_tags`: Additional hidden searchable tags.
+/// - `collect`: Includes the card in collections by default.
+/// - `collection_summary`: Optional body used by compact collections.
+/// ```typst
+/// #result_box("Capacity", tags: ("important",))[$ C = max_(p(x)) I(X;Y) $]
+/// ```
 #let result_box(title, body, breakable: false, tag: none, tags: (), metadata_tags: (), collect: true, collection_summary: none) = _card(
   title, body, kind: "result", breakable: breakable, tag: tag, tags: tags,
   metadata_tags: metadata_tags, collect: collect, collection_summary: collection_summary,
 )
 
+/// Creates a green result card that may split across pages or columns.
+/// Its body uses the result tint rather than the non-breakable white default.
+/// - `title`, `body`: Result heading and content.
+/// - `tag` / `tags`: Visible searchable pills; `metadata_tags` adds hidden tags.
+/// - `collect`: Includes the card in collections; defaults to `true`.
+/// - `collection_summary`: Optional replacement body for compact collections.
+/// ```typst
+/// #breakable_result_box("Long derivation", metadata_tags: ("derivation",))[
+///   Derivation steps may continue in the next column.
+/// ]
+/// ```
 #let breakable_result_box(title, body, tag: none, tags: (), metadata_tags: (), collect: true, collection_summary: none) = result_box(
   title, body, breakable: true, tag: tag, tags: tags,
   metadata_tags: metadata_tags, collect: collect, collection_summary: collection_summary,
 )
 
+/// Creates a blue theory or derivation card.
+/// - `title`, `body`: Card heading and explanatory content.
+/// - `breakable`: Defaults to `true`, allowing splits and using a tinted body.
+/// - `tag` / `tags`: Visible searchable pills; `metadata_tags` adds hidden tags.
+/// - `collect`: Emits collection metadata by default.
+/// - `collection_summary`: Optional compact-collection replacement for `body`.
+/// ```typst
+/// #theory_box("Sampling theorem", tag: "important")[State the bandwidth condition.]
+/// ```
 #let theory_box(title, body, breakable: true, tag: none, tags: (), metadata_tags: (), collect: true, collection_summary: none) = _card(
   title, body, kind: "theory", breakable: breakable, tag: tag, tags: tags,
   metadata_tags: metadata_tags, collect: collect, collection_summary: collection_summary,
 )
 
+/// Creates a blue exercise or worked-method card.
+/// - `title`, `body`: Exercise heading and content.
+/// - `breakable`: Defaults to `true`, allowing splits and using a tinted body.
+/// - `tag` / `tags`: Visible searchable pills.
+/// - `metadata_tags`: Hidden tags; defaults to `("exercise",)`.
+/// - `collect`: Includes the card in collections by default.
+/// - `collection_summary`: Optional body used by compact collections.
+/// ```typst
+/// #exercise_box("Matched filter", tags: ("exam",))[Determine the impulse response.]
+/// ```
 #let exercise_box(title, body, breakable: true, tag: none, tags: (), metadata_tags: ("exercise",), collect: true, collection_summary: none) = _card(
   title, body, kind: "exercise", breakable: breakable, tag: tag, tags: tags,
   metadata_tags: metadata_tags, collect: collect, collection_summary: collection_summary,
 )
 
+/// Creates a blue example card.
+/// - `title`, `body`: Example heading and worked content.
+/// - `breakable`: Defaults to `true`, allowing splits and using a tinted body.
+/// - `tag` / `tags`: Visible searchable pills.
+/// - `metadata_tags`: Hidden tags; defaults to `("example",)`.
+/// - `collect`: Includes the card in collections by default.
+/// - `collection_summary`: Optional body used by compact collections.
+/// ```typst
+/// #example_box("Binary source")[For $p = 1/2$, $H_b (p) = 1$.]
+/// ```
 #let example_box(title, body, breakable: true, tag: none, tags: (), metadata_tags: ("example",), collect: true, collection_summary: none) = _card(
   title, body, kind: "example", breakable: breakable, tag: tag, tags: tags,
   metadata_tags: metadata_tags, collect: collect, collection_summary: collection_summary,
 )
 
+/// Creates a purple proof card.
+/// - `title`, `body`: Proof heading and argument.
+/// - `breakable`: Defaults to `true`, allowing long proofs to split.
+/// - `tag` / `tags`: Visible searchable pills.
+/// - `metadata_tags`: Hidden tags; defaults to `("proof",)`.
+/// - `collect`: Includes the proof in collections by default.
+/// - `collection_summary`: Optional concise proof body for compact collections.
+/// ```typst
+/// #proof_box("Converse", collection_summary: [Follows from data processing.])[
+///   Apply the data-processing inequality to the Markov chain.
+/// ]
+/// ```
 #let proof_box(title, body, breakable: true, tag: none, tags: (), metadata_tags: ("proof",), collect: true, collection_summary: none) = _card(
   title, body, kind: "proof", breakable: breakable, tag: tag, tags: tags,
   metadata_tags: metadata_tags, collect: collect, collection_summary: collection_summary,
 )
 
+/// Creates a red exam or critical card with a visible `EXAM` pill by default.
+/// - `title`, `body`: Card heading and exam-relevant content.
+/// - `breakable`: Defaults to `true`, allowing splits and using a tinted body.
+/// - `tag` / `tags`: Visible searchable pills; `tags` defaults to `("exam",)`.
+/// - `metadata_tags`: Additional hidden searchable tags.
+/// - `collect`: Includes the card in collections by default.
+/// - `collection_summary`: Optional body used by compact collections.
+/// ```typst
+/// #exam_box("Common question")[Derive the matched-filter signal-to-noise ratio.]
+/// ```
 #let exam_box(title, body, breakable: true, tag: none, tags: ("exam",), metadata_tags: (), collect: true, collection_summary: none) = _card(
   title, body, kind: "exam", breakable: breakable, tag: tag, tags: tags,
   metadata_tags: metadata_tags, collect: collect, collection_summary: collection_summary,
 )
 
+/// Creates an orange warning card with a visible `WARN` pill by default.
+/// - `title`, `body`: Warning heading and cautionary content.
+/// - `breakable`: Defaults to `true`, allowing splits and using a tinted body.
+/// - `tag` / `tags`: Visible searchable pills; `tags` defaults to `("warn",)`.
+/// - `metadata_tags`: Additional hidden searchable tags.
+/// - `collect`: Includes the card in collections by default.
+/// - `collection_summary`: Optional body used by compact collections.
+/// ```typst
+/// #warning_box("Convention")[Confirm the Fourier-transform sign before use.]
+/// ```
 #let warning_box(title, body, breakable: true, tag: none, tags: ("warn",), metadata_tags: (), collect: true, collection_summary: none) = _card(
   title, body, kind: "warning", breakable: breakable, tag: tag, tags: tags,
   metadata_tags: metadata_tags, collect: collect, collection_summary: collection_summary,
 )
 
+/// Creates a solid red TODO card that is non-breakable by default.
+/// - `title`, `body`: Task heading and unfinished content.
+/// - `breakable`: Defaults to `false`; the palette keeps the body red either way.
+/// - `tag` / `tags`: Optional visible searchable pills.
+/// - `metadata_tags`: Hidden tags; defaults to `("todo",)`.
+/// - `collect`: Includes the card in collections by default.
+/// - `collection_summary`: Optional body used by compact collections.
+/// ```typst
+/// #todo_box("Complete proof", collect: false)[Check the equality condition.]
+/// ```
 #let todo_box(title, body, breakable: false, tag: none, tags: (), metadata_tags: ("todo",), collect: true, collection_summary: none) = _card(
   title, body, kind: "todo", breakable: breakable, tag: tag, tags: tags,
   metadata_tags: metadata_tags, collect: collect, collection_summary: collection_summary,
@@ -834,6 +1168,18 @@
 // PUBLIC NESTED CARD SYSTEM
 // ============================================================================
 
+/// Builds a compact nested card from a built-in kind or custom palette.
+/// - `title`, `body`: Nested-card heading and body content.
+/// - `kind`: Key in `sub_box_palettes`; defaults to `"definition"`.
+/// - `breakable`: Defaults to `false`; breakable cards use the palette tint.
+/// - `tag` / `tags`: Visible searchable pills; `metadata_tags` adds hidden tags.
+/// - `palette`: Optional record with `title`, `tint`, `border`, `accent`, and optional
+///   `body`, overriding the palette selected by `kind`.
+/// - `collect`: Emits collection metadata by default. `collection_summary` supplies an
+///   optional replacement body when a collection is rendered compactly.
+/// ```typst
+/// #sub_box("Local lemma", kind: "theorem", tags: ("proof",))[State the lemma.]
+/// ```
 #let sub_box(
   title,
   body,
@@ -859,26 +1205,73 @@
   collection_summary: collection_summary,
 )
 
+/// Creates a light-blue nested definition card.
+/// - `title`, `body`: Definition heading and content.
+/// - `breakable`: Defaults to `false`; set `true` for a tinted splittable body.
+/// - `tag` / `tags`: Visible pills; `metadata_tags` defaults to `("definition",)`.
+/// - `collect`: Includes the card in collections by default.
+/// - `collection_summary`: Optional replacement body for compact collections.
+/// ```typst
+/// #sub_definition_box("Entropy")[Average uncertainty of a random variable.]
+/// ```
 #let sub_definition_box(title, body, breakable: false, tag: none, tags: (), metadata_tags: ("definition",), collect: true, collection_summary: none) = sub_box(
   title, body, kind: "definition", breakable: breakable, tag: tag, tags: tags,
   metadata_tags: metadata_tags, collect: collect, collection_summary: collection_summary,
 )
 
+/// Creates a light-blue nested reminder card.
+/// - `title`, `body`: Reminder heading and content.
+/// - `breakable`: Defaults to `false`; set `true` for a tinted splittable body.
+/// - `tag` / `tags`: Visible pills; `metadata_tags` defaults to `("reminder",)`.
+/// - `collect`: Includes the card in collections by default.
+/// - `collection_summary`: Optional replacement body for compact collections.
+/// ```typst
+/// #sub_reminder_box("Units")[Convert decibels before using a linear formula.]
+/// ```
 #let sub_reminder_box(title, body, breakable: false, tag: none, tags: (), metadata_tags: ("reminder",), collect: true, collection_summary: none) = sub_box(
   title, body, kind: "reminder", breakable: breakable, tag: tag, tags: tags,
   metadata_tags: metadata_tags, collect: collect, collection_summary: collection_summary,
 )
 
+/// Creates a purple nested theorem card with a visible `PROOF` pill.
+/// - `title`, `body`: Theorem heading and statement or proof content.
+/// - `breakable`: Defaults to `false`; set `true` to permit splitting.
+/// - `tag` / `tags`: Visible pills; `tags` defaults to `("proof",)`.
+/// - `metadata_tags`: Hidden tags; defaults to `("theorem",)`.
+/// - `collect`: Includes the card in collections by default.
+/// - `collection_summary`: Optional replacement body for compact collections.
+/// ```typst
+/// #sub_theorem_box("Source coding")[The expected length is bounded by entropy.]
+/// ```
 #let sub_theorem_box(title, body, breakable: false, tag: none, tags: ("proof",), metadata_tags: ("theorem",), collect: true, collection_summary: none) = sub_box(
   title, body, kind: "theorem", breakable: breakable, tag: tag, tags: tags,
   metadata_tags: metadata_tags, collect: collect, collection_summary: collection_summary,
 )
 
+/// Creates a blue nested example card.
+/// - `title`, `body`: Example heading and worked content.
+/// - `breakable`: Defaults to `false`; set `true` to permit splitting.
+/// - `tag` / `tags`: Visible pills; `metadata_tags` defaults to `("example",)`.
+/// - `collect`: Includes the card in collections by default.
+/// - `collection_summary`: Optional replacement body for compact collections.
+/// ```typst
+/// #sub_example_box("Fair bit")[$H_b (1/2) = 1$.]
+/// ```
 #let sub_example_box(title, body, breakable: false, tag: none, tags: (), metadata_tags: ("example",), collect: true, collection_summary: none) = sub_box(
   title, body, kind: "example", breakable: breakable, tag: tag, tags: tags,
   metadata_tags: metadata_tags, collect: collect, collection_summary: collection_summary,
 )
 
+/// Creates an orange nested warning card with a visible `WARN` pill.
+/// - `title`, `body`: Warning heading and cautionary content.
+/// - `breakable`: Defaults to `false`; set `true` to permit splitting.
+/// - `tag` / `tags`: Visible pills; `tags` defaults to `("warn",)`.
+/// - `metadata_tags`: Additional hidden searchable tags.
+/// - `collect`: Includes the card in collections by default.
+/// - `collection_summary`: Optional replacement body for compact collections.
+/// ```typst
+/// #sub_warning_box("Domain")[The logarithm requires a positive argument.]
+/// ```
 #let sub_warning_box(title, body, breakable: false, tag: none, tags: ("warn",), metadata_tags: (), collect: true, collection_summary: none) = sub_box(
   title, body, kind: "warning", breakable: breakable, tag: tag, tags: tags,
   metadata_tags: metadata_tags, collect: collect, collection_summary: collection_summary,
@@ -896,6 +1289,18 @@
 // EQUATIONS, DIAGRAMS, AND SIMPLE FLOWS
 // ============================================================================
 
+/// Places a centered equation in a fixed, non-breakable blue card.
+/// - `body`: Equation or mathematical content.
+/// - `title`: Optional heading; takes precedence over `label`.
+/// - `label`: Fallback heading when `title` is `none`; otherwise the heading is “Equation”.
+///   This parameter is display content, not a Typst reference label.
+/// - `tag` / `tags`: One or several visible searchable pills.
+/// - `metadata_tags`: Hidden tags; defaults to `("equation",)`.
+/// - `collect`: Emits collection metadata by default; `collection_summary` can replace
+///   the equation body in compact collections.
+/// ```typst
+/// #equation_box(title: [Capacity], tags: ("important",))[$ C = max_(p(x)) I(X;Y) $]
+/// ```
 #let equation_box(body, title: none, label: none, tag: none, tags: (), metadata_tags: ("equation",), collect: true, collection_summary: none) = {
   let display_title = if title != none { title } else if label != none { label } else { [Equation] }
   let visible_tags = _normalize_tags(tag: tag, tags: tags)
@@ -914,6 +1319,16 @@
   _render_card(record)
 }
 
+/// Places centered diagram content in a fixed, non-breakable neutral card.
+/// - `body`: Diagram, image, or flow content.
+/// - `title`: Optional heading; defaults to “Diagram”.
+/// - `tag` / `tags`: One or several visible searchable pills.
+/// - `metadata_tags`: Hidden tags; defaults to `("diagram",)`.
+/// - `collect`: Emits collection metadata by default; `collection_summary` can replace
+///   the diagram body in compact collections.
+/// ```typst
+/// #diagram_box(title: [Link])[#flow_diagram(([Source], [Channel], [Sink]))]
+/// ```
 #let diagram_box(body, title: none, tag: none, tags: (), metadata_tags: ("diagram",), collect: true, collection_summary: none) = {
   let display_title = if title == none { [Diagram] } else { title }
   let visible_tags = _normalize_tags(tag: tag, tags: tags)
@@ -935,6 +1350,22 @@
 #let eqbox = equation_box
 #let dbox = diagram_box
 
+/// Builds a compact linear flow from boxed nodes and optional arrow labels.
+/// - `nodes`: Non-empty array of content nodes.
+/// - `arrows`: `none`, an empty array, or one label per gap between nodes.
+/// - `direction`: `"right"` (default) or `"down"`.
+/// - `spacing`: Gap between flow items; defaults to `0.35em`.
+/// - `node_fill`: Node background paint.
+/// - `node_stroke`: Node-border paint.
+/// Assertions reject empty nodes, unsupported directions, and mismatched arrow counts.
+/// Use a dedicated diagram package for branching graphs; this helper is intentionally linear.
+/// ```typst
+/// #flow_diagram(
+///   ([Source], [Encoder], [Channel]),
+///   arrows: ([bits], [codeword]),
+///   direction: "right",
+/// )
+/// ```
 #let flow_diagram(
   nodes,
   arrows: none,
@@ -982,6 +1413,20 @@
 // MATH ANNOTATIONS
 // ============================================================================
 
+/// Draws an underbrace with a movable annotation.
+/// - `expression`: Mathematical content under the brace.
+/// - `annotation`: Label content below the brace.
+/// - `dx`, `dy`: Move only the annotation; both default to `0em`.
+/// - `body_dx`, `body_dy`: Move the braced expression independently.
+/// - `size`: Annotation text size; `none` preserves custom sizing.
+/// - `tone`: Optional key in `semantic_colors`; `none` preserves custom color.
+/// - `fill`: Explicit annotation paint that takes precedence over `tone`.
+/// - `affect_layout`: When `false` (default), places the label without reserving its
+///   normal math space; `true` uses a layout-affecting move.
+/// In math-mode calls, inject named code values such as `#none` and lengths with `#`.
+/// ```typst
+/// #under_note($H_b (p)$, [binary entropy], tone: "important")
+/// ```
 #let under_note(
   expression,
   annotation,
@@ -1006,6 +1451,20 @@
   ),
 )
 
+/// Draws an overbrace with a movable annotation.
+/// - `expression`: Mathematical content under the overbrace.
+/// - `annotation`: Label content above the brace.
+/// - `dx`, `dy`: Move only the annotation; `dy` defaults to `-0.6em`.
+/// - `body_dx`, `body_dy`: Move the braced expression independently.
+/// - `size`: Annotation text size; `none` preserves custom sizing.
+/// - `tone`: Optional key in `semantic_colors`; `none` preserves custom color.
+/// - `fill`: Explicit annotation paint that takes precedence over `tone`.
+/// - `affect_layout`: When `false` (default), places the label without reserving its
+///   normal math space; `true` uses a layout-affecting move.
+/// In math-mode calls, inject named code values such as `#none` and lengths with `#`.
+/// ```typst
+/// #over_note($C$, [capacity], fill: orange, dx: 0.4em)
+/// ```
 #let over_note(
   expression,
   annotation,
@@ -1038,6 +1497,18 @@
 // CARD COLLECTIONS
 // ============================================================================
 
+/// Re-renders cards collected elsewhere in the document, optionally filtering them.
+/// - `tag`: Case-insensitive searchable tag filter; `none` accepts every tag.
+/// - `kind`: Exact card-kind filter such as `"proof"`; `none` accepts every kind.
+/// - `title`: Optional heading displayed above the collected cards.
+/// - `compact`: Uses each card's `collection_summary` when available; otherwise keeps
+///   its original body. Defaults to `false`.
+/// Filters combine with AND when both are supplied. Cards created with `collect: false`
+/// are absent. Matches are duplicated at the call location without emitting new pill
+/// metadata, so collecting a collection does not recursively grow the result.
+/// ```typst
+/// #collect_cards(tag: "definition", title: [Definitions], compact: true)
+/// ```
 #let collect_cards(
   tag: none,
   kind: none,
@@ -1076,15 +1547,49 @@
 // DOCUMENT STRUCTURE
 // ============================================================================
 
+/// Creates a level-1 heading compatible with formulaire chapter behavior.
+/// - `title`: Heading content.
+/// Numbering and optional chapter page breaks are controlled by `formulaire`.
+/// ```typst
+/// #part[Information theory]
+/// ```
 #let part(title) = heading(level: 1)[#title]
 
+/// Creates a level-2 heading, normally at the start of a new column.
+/// - `title`: Heading content.
+/// - `new_column`: Issues a weak column break first; defaults to `true`.
+/// ```typst
+/// #topic("Channel models", new_column: false)
+/// ```
 #let topic(title, new_column: true) = [
   #if new_column [#colbreak(weak: true)]
   #heading(level: 2)[#title]
 ]
 
+/// Creates a level-3 heading for a detail within a topic.
+/// - `title`: Heading content.
+/// ```typst
+/// #subtopic[Binary symmetric channel]
+/// ```
 #let subtopic(title) = heading(level: 3)[#title]
 
+/// Renders the optional standalone front page and then starts the main document.
+/// - `title`: Optional formulaire subtitle shown below the course.
+/// - `course`: Course name; defaults to `"Course"`.
+/// - `authors`: Author content; defaults to `[Your Name]` and may contain several names.
+/// - `institution`: Institution text; defaults to `"UCLouvain"`.
+/// - `details`: Optional scope or notes content. An empty content block omits its card.
+/// - `show_outline`: Includes a card containing the document outline by default.
+/// - `outline_depth`: Maximum outline depth; defaults to `2`.
+/// The helper begins with a weak page break and ends with a forced page break. Normally
+/// `formulaire(front_page: true)` calls it automatically.
+/// ```typst
+/// #intro_page(
+///   course: "LELEC2700 - Microwaves",
+///   authors: [A. Student],
+///   details: [Core formulas for the final exam.],
+/// )
+/// ```
 #let intro_page(
   title: none,
   course: "Course",
@@ -1125,6 +1630,30 @@
   #pagebreak()
 ]
 
+/// Installs the complete Gen 2 document style around `body`.
+/// - `title`: Optional short title shown in edge text and on the front page.
+/// - `course`: Course identifier/name; defaults to `"Course"`.
+/// - `authors`: Author content used in edge text and front matter.
+/// - `institution`: Institution text; defaults to `"UCLouvain"`.
+/// - `layout`: `"horizontal"` for landscape three-column output (default), or
+///   `"vertical"` for portrait two-column output.
+/// - `hole_punch_preview`: Overlays four red punch guides on both long edges.
+/// - `front_page`: Calls `intro_page` before `body` when `true`; defaults to `false`.
+/// - `details`, `show_outline`, `outline_depth`: Front-page notes and outline options.
+/// - `chapter_new_page`: Starts numbered level-1 headings after the first on a weak new
+///   page; defaults to `true`.
+/// - `bibliography_new_page`: Inserts a weak page break before bibliography elements;
+///   defaults to `true`.
+/// - `body`: Document content supplied by the show rule.
+/// The wrapper configures A4 orientation, margins, columns, typography, heading numbering,
+/// repeated edge text, and the bibliography/heading show rules. An invalid layout asserts.
+/// ```typst
+/// #show: formulaire.with(
+///   course: "LELEC2700 - Microwaves",
+///   authors: [A. Student],
+///   layout: "horizontal",
+/// )
+/// ```
 #let formulaire(
   title: none,
   course: "Course",
