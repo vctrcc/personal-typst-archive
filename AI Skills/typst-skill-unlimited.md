@@ -367,6 +367,7 @@ Consequences:
 - `$x_1^2_3$` nests: `attach(base: x, t: attach(base: 2, b: 3), b: 1)`.
 - `$x_1^2$` ≡ `$x^2_1$` — order irrelevant (both `attach(base: [x], t: [2], b: [1])`).
 - `$x_ 1$` (space after `_`) is VALID = x₁ (trivia is ignored).
+- **Subscripted function notation needs a separating space before arguments:** `$H_b (p)$`, `$P_X (x)$`, `$D_"KL" (P || Q)`. Without it, `$H_b(p)$` can parse as `H_(b(p))` because `b(p)` is a single call-shaped atom consumed by `_`; it is not reliably `H_b` followed by `(p)`.
 - Scripts bind tighter than `/`: `$a_1/b_2$` = a₁/b₂.
 - Primes: `$f'$`, `$f''$`; `$a'''_b$` works.
 - Corner attachments: `attach(base, t:, b:, tl:, bl:, tr:, br:)`.
@@ -496,6 +497,7 @@ $underbrace(a + b)_("result")$
 | `#let x = 5; $x$` | `$#x$` | single letters never look up |
 | `$unknownthing(x)$` | define or quote | undefined multi-letter call errors |
 | `$sin x + y$` = sin(x+y) | `$sin(x + y)$` | op binds to x only |
+| `$H_b(p)$` meaning H sub b at p | `$H_b (p)$` | no space lets `_` consume the call `b(p)` |
 | `$10 m/speed$` | `$10 m/"speed"$` | multi-letter denom lookup |
 | `$e^(i Theta) + pi$` | `$e^(i Theta + pi)$` | `^` takes one atom |
 | `$x_ 1$` | valid = x₁ | trivia ignored |

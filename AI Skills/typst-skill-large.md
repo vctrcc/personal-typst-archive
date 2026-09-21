@@ -142,6 +142,7 @@ Type mistakes: `#box(width: 10)` → "expected auto, relative length, or fractio
 - **Chained scripts nest (right-assoc), not errors**: `$e^x^2$` = e^(x²); `$x_1^2_3$` nests.
 - Order irrelevant: `$x_1^2$` ≡ `$x^2_1$`.
 - `$x_ 1$` (space after `_`) is valid.
+- **Subscripted function notation needs separation before arguments:** write `$H_b (p)$`, `$P_X (x)$`, and `$D_"KL" (P || Q)$`. Do not write `$H_b(p)$`: because scripts take one atom and `b(p)` is a call-shaped atom, Typst can parse it as `H_(b(p))` rather than as `H_b` followed by `(p)`.
 - Primes: `$f'$`, `$f''$`; scripts attach as usual.
 - `{ }` are **visible braces** (auto-scaling delimiters) — there is NO `{}` grouping in Typst! `$x_{n+1}$` renders braces. Group with `( )`.
 - `$S_1.plus.a$` → error (symbol modifier after script); use `attach(S, t:, b:)`.
@@ -235,6 +236,7 @@ Does NOT exist: `math.eval math.solve math.tt math.rm math.it math.scr math.hspa
 | `$root(x, n)$` | `root(n, x)` — index FIRST |
 | `$a/b/c$` wanting a/(b/c) | `$a/(b/c)$` — left-assoc |
 | `$sin x + y$` meaning sin(x+y) | `$sin(x + y)$` |
+| `$H_b(p)$` meaning binary entropy at p | `$H_b (p)$` — keep the call out of the subscript |
 | `#let x = 5; $x$` expecting 5 | `$#x$` — single letters never look up |
 
 ### 5.14 Cross-language conversion (LaTeX → Typst)

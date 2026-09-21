@@ -158,6 +158,8 @@ Attachments:
 | `$x_(i+1)$`  | `$x_{i+1}$`  |
 | `$e^(i pi)$` | `$e^{i\pi}$` |
 
+**Subscripted function notation:** put a space before the argument list. Write `$H_b (p)$`, `$P_X (x)$`, or `$D_"KL" (P || Q)`, not `$H_b(p)$`. Since `_` consumes one atom, the unspaced form can parse `b(p)` as the subscript itself: `H_(b(p))`.
+
 Multi-line aligned math:
 
 | Correct Typst                     |

@@ -59,6 +59,7 @@ Enter: `$x^2$` inline; `$ x^2 $` (space at **both** ends) = block. `$...$` works
 - `$e^(i Theta + pi)$` ✅ (`$e^(i Theta) + pi$` puts `+pi` outside)
 - `$log_(n+1)(Theta + pi)$` ✅ parens shown, auto-scaled
 - `$e^x^2$` = e^(x²) (chained scripts nest — valid); `$x_1^2$` ≡ `$x^2_1$`
+- After a subscripted symbol, add a space before its arguments: `$H_b (p)$` ✅, `$H_b(p)$` ❌. With no space, the call can bind to the subscript, producing `H_(b(p))` instead of `H_b` applied to `p`.
 - `{ }` are **visible braces** — never `x_{n+1}`; group with `( )`: `x_(n+1)`
 - `$a^b c$` → c NOT in exponent.
 
